@@ -1,0 +1,21 @@
+{
+  "name": "cjkv-element",
+  "version": "0.0.1",
+  "description": "漢字的拆分及搜尋",
+  "main": "index.js",
+  "type" :"module",
+  "scripts": {
+    "test": "node test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yapcheahshen/cjkv-element.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/yapcheahshen/cjkv-element/issues"
+  },
+  "homepage": "https://github.com/yapcheahshen/cjkv-element#readme"
+}
