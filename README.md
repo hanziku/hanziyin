@@ -8,7 +8,9 @@
     deriveFrom  列出所有孳乳，可遞迴
     deriveCount 孳乳數
     factorsOf   取得構字部件
-
+    primeArray  獨體字陣列
+    factorArray 構件陣列
+    
     詳見test.js
 
 ## 產生

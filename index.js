@@ -1,1 +1,1 @@
-export * from './src/element.js'
+export * from './src/ziyin.js'

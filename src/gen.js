@@ -1,5 +1,6 @@
 import { packRLE,codePointLength,forEachUTF32} from "pitaka/utils";
 import { readFileSync,writeFileSync } from "fs";
+import {unpack_stroke_type,pack_stroke_type} from './stroke-type.js'
 //from https://github.com/cjkvi/cjkvi-ids
 const rawIDS=readFileSync('../3rdparty/ids.txt','utf8').split(/\r?\n/);
 const rawStrokes=readFileSync('../3rdparty/ucs-strokes.txt','utf8').split(/\r?\n/); //from Unihan
@@ -142,17 +143,18 @@ const dump_data=write=>{
         factors+=factorarr[i][0];
     }
 
-    // console.log(derivecount,offsets)
+    const stroketype=pack_stroke_type(primes)
     const strokes=dump_strokes();
     if (write) writeFileSync('hz_data.js',
     'export const primes="'+primes.join('')+'"\n'+
+    'export const prime_stroketype="'+stroketype+'"\n'+
     'export const factors="'+factors+'"\n'+ //全形空白只是分隔符
     'export const strokes="'+strokes.replace(/\\/g,'\\\\')+'"\n'+
     'export const derivecount='+JSON.stringify(derivecount)+'\n'+
     'export const factors_offset='+JSON.stringify(offsets)+'\n'+
     'export const idsarr=`'+out.join('\n')+'`.split(/\\r?\\n/);','utf8');
 }
-dump_data(true)
+dump_data(false)
 
 
 // console.log(strokes) , 大於 52 的很少 52:1, 53:1,60:1,64:1
