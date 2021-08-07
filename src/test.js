@@ -33,5 +33,7 @@ pass+=deriveCount('木')==3174;test++;
 pass+=deriveCount('女')==1766;test++;
 pass+=deriveCount('圃')==1;test++;
 
-console.log('')
+const rr=deriveFrom('木').slice(0,5).map(item=>String.fromCodePoint(item));
+
+console.log(rr)
 console.log(`${pass}/${test}`); 

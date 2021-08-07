@@ -1,8 +1,8 @@
 import { packRLE,codePointLength,forEachUTF32} from "pitaka/utils";
 import { readFileSync,writeFileSync } from "fs";
 //from https://github.com/cjkvi/cjkvi-ids
-const rawIDS=readFileSync('./3rdparty/ids.txt','utf8').split(/\r?\n/);
-const rawStrokes=readFileSync('./3rdparty/ucs-strokes.txt','utf8').split(/\r?\n/); //from Unihan
+const rawIDS=readFileSync('../3rdparty/ids.txt','utf8').split(/\r?\n/);
+const rawStrokes=readFileSync('../3rdparty/ucs-strokes.txt','utf8').split(/\r?\n/); //from Unihan
 
 const comp_hz={};
 const primes=[];
@@ -54,6 +54,8 @@ rawIDS.forEach(line=>{
     if (ids.indexOf('\t')>0) {
         ids=ids_byregion(ids);
         multicount++;
+    } else {
+        ids=ids.replace(/\[(.+?)\]/g,'');//只有一種拆法，但也標記區碼
     }
     let partcount=0;
     forEachUTF32(ids,ch=>{

@@ -1,21 +1,23 @@
 {
-  "name": "cjkv-element",
+  "name": "hanziyin",
   "version": "0.0.1",
-  "description": "漢字的拆分及搜尋",
+  "description": "漢字引",
   "main": "index.js",
   "type" :"module",
+  
   "scripts": {
-    "test": "node test"
+    "test": "node test",
+"build":"rollup index.js -n hanziyin --file hanziyin.js -f umd"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/yapcheahshen/cjkv-element.git"
+    "url": "git+https://github.com/yapcheahshen/hanziyin.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/yapcheahshen/cjkv-element/issues"
+    "url": "https://github.com/yapcheahshen/hanziyin/issues"
   },
-  "homepage": "https://github.com/yapcheahshen/cjkv-element#readme"
+  "homepage": "https://github.com/yapcheahshen/hanziyin#readme"
 }

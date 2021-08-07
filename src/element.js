@@ -33,7 +33,7 @@ const matchIDC=(part,npart)=> {
     let out=[];
     forEachRLE(idsarr[npart],(idc,pos,repeat)=>{
         if (idc===part) for (let i=pos;i<=pos+repeat;i++) {
-            out.push(pos);
+            out.push(i);
         }
     }) 
     return out;
