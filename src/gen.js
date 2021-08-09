@@ -1,5 +1,6 @@
-import { packRLE,codePointLength,forEachUTF32} from "pitaka/utils";
+import { packRLE,codePointLength,forEachUTF32} from "./rle.js";
 import { readFileSync,writeFileSync } from "fs";
+import errata from './errata.js'
 import {unpack_stroke_type,pack_stroke_type} from './stroke-type.js'
 //from https://github.com/cjkvi/cjkvi-ids
 const rawIDS=readFileSync('../3rdparty/ids.txt','utf8').split(/\r?\n/);
@@ -44,16 +45,21 @@ rawIDS.forEach(line=>{
     line=line.replace('"',''); //fixing U+2AAC9	𪫉	⿰⿳日亠早彡[T]	⿰彦彡[O]"
     const m=line.match(/U\+[\dA-F]{4,5}\t(.)\t(.+)/u);
     if (!m) throw line
-
-    const [m0,hz,raw]=m;
+    
+    let [m0,hz,raw]=m;
     if (hz==raw) {
         primes.push(hz);//    ('末級部件',hz)
         return;
     }
+    if (errata[hz]) {
+        console.log('fix ids',hz,raw,errata[hz])
+        raw=errata[hz];
+    }
+
     let ids=raw.replace(/[\u2ff0-\u2fff]/g,'');;
     
     if (ids.indexOf('\t')>0) {
-        ids=ids_byregion(ids);
+        ids=ids_byregion(ids,hz);
         multicount++;
     } else {
         ids=ids.replace(/\[(.+?)\]/g,'');//只有一種拆法，但也標記區碼
@@ -125,36 +131,38 @@ const dump_data=write=>{
     //部件統計
     let factorarr=[];
     for (let part in comp_hz) {
-        const derived=codePointLength(comp_hz[part]);
-        if (part!=='　') factorarr.push([part,derived])
+        const breed=codePointLength(comp_hz[part]);
+        if (part!=='　') factorarr.push([part,breed])
     }    
     factorarr.sort((a,b)=>b[1]-a[1]);
     // console.log(factorarr)
 
     //依部件所在的位置(ucs2)，得到孳乳的數量，即快速知道某個部件可以組多少個字。
     let factors='',prev=0;
-    const derivecount=[],offsets=[];
+    const breedcount=[],offsets=[];
     for (let i=0;i<factorarr.length;i++) {
         if (prev!==factorarr[i][1]) {
             offsets.push(factors.length);
-            derivecount.push(factorarr[i][1]);
+            breedcount.push(factorarr[i][1]);
         }
         prev=factorarr[i][1];
         factors+=factorarr[i][0];
     }
 
     const stroketype=pack_stroke_type(primes)
+    const factorstroketype=pack_stroke_type(factorarr.map(i=>i[0]), idsarr[0],idsarr[1]);
     const strokes=dump_strokes();
     if (write) writeFileSync('hz_data.js',
     'export const primes="'+primes.join('')+'"\n'+
-    'export const prime_stroketype="'+stroketype+'"\n'+
+    'export const prime_stroketype="'+stroketype.replace(/\\/g,'\\\\')+'"\n'+
     'export const factors="'+factors+'"\n'+ //全形空白只是分隔符
+    'export const factor_stroketype="'+factorstroketype.replace(/\\/g,'\\\\')+'"\n'+ 
     'export const strokes="'+strokes.replace(/\\/g,'\\\\')+'"\n'+
-    'export const derivecount='+JSON.stringify(derivecount)+'\n'+
+    'export const breedcount='+JSON.stringify(breedcount)+'\n'+
     'export const factors_offset='+JSON.stringify(offsets)+'\n'+
     'export const idsarr=`'+out.join('\n')+'`.split(/\\r?\\n/);','utf8');
 }
-dump_data(false)
+dump_data(true)
 
 
 // console.log(strokes) , 大於 52 的很少 52:1, 53:1,60:1,64:1
