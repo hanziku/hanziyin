@@ -11,13 +11,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/yapcheahshen/hanziyin.git"
+    "url": "git+https://github.com/hanziku/hanziyin.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/yapcheahshen/hanziyin/issues"
+    "url": "https://github.com/hanziku/hanziyin/issues"
   },
-  "homepage": "https://github.com/yapcheahshen/hanziyin#readme"
+  "homepage": "https://github.com/hanziku/hanziyin#readme"
 }

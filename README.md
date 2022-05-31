@@ -4,7 +4,7 @@
 
 ## 演示
 
-[https://github.com/yapcheahshen/hanziyin/](https://github.com/yapcheahshen/hanziyin/)
+[汉字引](http://hanziku.github.io/hanziyin/)
 
 
 ## 基本观念
