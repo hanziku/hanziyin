@@ -1,3 +1,5 @@
+//遍歷壓縮字串的每個元素，元素是一個 UTF32 字元
+//回呼 字元, 所在位置以及重覆次數。
 export const forEachRLE=(str,cb)=>{ //copy from pitaka/utils/rlestr.js
     if (!str)return str;
     let i=1,ch=String.fromCodePoint(str.codePointAt(0)),repeat=0,pos=0,done=false;
@@ -28,7 +30,7 @@ export const forEachRLE=(str,cb)=>{ //copy from pitaka/utils/rlestr.js
 }
 
 
-
+//效率地儲存含大量的空白的長字串
 //巾巾巾巾巾巾㚖巾  ==> 巾5㚖巾
 //except any character but number
 export const packRLE=str=>{  //連續出現的字，以數字替代  

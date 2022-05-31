@@ -26,7 +26,7 @@ export const splitUTF32=s=>{ //from pitaka/utils
     }
     return out;
 }
-
+//取得 多個 code points 的值，比重覆調用 valOf 有較率，因只須遍歷 RLE一次
 const valsOf=(cparr,RLE)=>{
     let i=0,found=false;
     let now=cparr[i][0];
@@ -44,7 +44,7 @@ const valsOf=(cparr,RLE)=>{
     return found;
 }
 
-const valOf=(ch,RLE)=>{
+const valOf=(ch,RLE)=>{ //以 ch 的codepoint 為RLE位置的 值 （即ch的構件）
     const cp=(typeof ch=='number')?ch:ch.codePointAt(0);
     let out='';
     forEachRLE(RLE,(idc,pos,repeat)=>{
@@ -168,7 +168,7 @@ export const breedOf=(parts,order)=>{
         for (let j=0;j<parts.length;j++) {
             const o=matchIDC(parts[j],i);
             //為了找重覆的部件，如「木木」，
-            //必須構件在構字序列的位置。
+            //必須構建在構字序列的位置。
             //j+1 是為了和undefined 更好區分
             for (let k=0;k<o.length;k++) {
                 const cp=o[k];
