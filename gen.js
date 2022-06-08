@@ -1,11 +1,11 @@
-import { packRLE} from "./rle.js";
-import {codePointLength,forEachUTF32} from './unicode.js'
+import { packRLE} from "./src/rle.js";
+import {codePointLength,forEachUTF32} from './src/unicode.js'
 import { readFileSync,writeFileSync } from "fs";
-import errata from './errata.js'
-import {unpack_stroke_type,pack_stroke_type} from './stroke-type.js'
+import errata from './src/errata.js'
+import {unpack_stroke_type,pack_stroke_type} from './src/stroke-type.js'
 //from https://github.com/cjkvi/cjkvi-ids
-const rawIDS=readFileSync('../cjkv/ids.txt','utf8').split(/\r?\n/);
-const rawStrokes=readFileSync('../ckjv/ucs-strokes.txt','utf8').split(/\r?\n/); //from Unihan
+const rawIDS=readFileSync('./cjkv/ids.txt','utf8').split(/\r?\n/);
+const rawStrokes=readFileSync('./cjkv/ucs-strokes.txt','utf8').split(/\r?\n/); //from Unihan
 
 
 const comp_hz={};
@@ -15,8 +15,8 @@ const region_code={};
 //一個 11 個長字串的陣列
 //每個字串position 為Unicode codepoint ，其值為構件。沒有構件補以 空格
 //通常一個字有兩個構件。
-//idsarr[0] 是全部字集第一個構件，比idarr[1]短，因為按部首排列，重覆部首會被RLE壓縮。(80KB)
-// idsarr[1] 是的第二個構件，這是最長的。(160KB左右) ，其後為48KB , 25KB,10KB,4KB ...
+//idsarr[0] 是全部字的第一個構件，比idarr[1]短，因為Unicode 按部首排列，第一個構件重覆率高可壓縮(80KB)
+// idsarr[1] 是的第二個構件，這是最長的，因為都有第二構件，而又無法壓縮。(160KB左右) ，其後為48KB , 25KB,10KB,4KB ...
 //idsarr[2]之後很稀疏（三構件的字較少），有大量重覆的空格。以 RLE 儲有效率。
 //因為尋找不必隨機讀取，在內存中不必展開。用forEachRLE 遍歷以獲取每個元件。
 
@@ -163,7 +163,7 @@ const dump_data=write=>{
     const stroketype=pack_stroke_type(primes)
     const factorstroketype=pack_stroke_type(factorarr.map(i=>i[0]), idsarr[0],idsarr[1]);
     const strokes=dump_strokes();
-    if (write) writeFileSync('hz_data.js',
+    if (write) writeFileSync('src/hz_data.js',
     'export const primes="'+primes.join('')+'"\n'+
     'export const prime_stroketype="'+stroketype.replace(/\\/g,'\\\\')+'"\n'+
     'export const factors="'+factors+'"\n'+ //全形空白只是分隔符

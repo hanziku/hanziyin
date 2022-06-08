@@ -43,8 +43,7 @@ const valsOf=(cparr,RLE)=>{
     }) 
     return found;
 }
-
-const valOf=(ch,RLE)=>{ //以 ch 的codepoint 為RLE位置的 值 （即ch的構件）
+const valOf=(ch,RLE)=>{ //以 ch 的codepoint 為RLE位置的 值 （即ch的構件）, RLE 位置可放UTF32
     const cp=(typeof ch=='number')?ch:ch.codePointAt(0);
     let out='';
     forEachRLE(RLE,(idc,pos,repeat)=>{
@@ -71,28 +70,31 @@ const matchIDC=(part,narr)=> {
     }) 
     return out;
 }
-const getFactor=ch=> {
-    const out=[];
-    if (Array.isArray(ch)) {
-        //array to hold sorted ch and result
-        const res=ch.map((c,idx)=>[typeof c=='string'?c.codePointAt(0):c,[],idx]) 
-        res.sort((a,b)=>a[0]-b[0]);  //valsOf assuming in codepoint order
+const getFactor=(ch,variant)=> {
+    let out=[];
+    //add factor cache no need to pass in ch array
+    // if (Array.isArray(ch)) {
+    //     //array to hold sorted ch and result
+    //     const res=ch.map((c,idx)=>[typeof c=='string'?c.codePointAt(0):c,[],idx]) 
+    //     res.sort((a,b)=>a[0]-b[0]);  //valsOf assuming in codepoint order
         
-        for (let i=0;i<idsarr.length;i++) {
-            const r=valsOf(res,idsarr[i]);
-            if (!r) break;
-        }
-        res.sort((a,b)=>a[2]-b[2]); //sort back to input order
-        return res.filter(item=>!!item[1]).map(item=>[item[0],item[1]]);
-    } else {
+    //     for (let i=0;i<idsarr.length;i++) {
+    //         const r=valsOf(res,idsarr[i]);
+
+    //         if (!r) break;
+    //     }
+    //     res.sort((a,b)=>a[2]-b[2]); //sort back to input order
+    //     out=res.filter(item=>!!item[1]).map(item=>[item[0],item[1]]);
+
+    // } else {
         for (let i=0;i<idsarr.length;i++) {
             const r=valOf(ch,idsarr[i]);
             if (!r) break;
+            if (r==0x3000 && !variant) break;
             out.push(r);
         }
         return out.filter(item=>!!item);
-    }
-    
+    // }    
 }
 const expandFactor=(f,out)=>{
     if (f=='　') return;
@@ -108,22 +110,30 @@ const expandFactor=(f,out)=>{
         }
     }
 }
-export const factorsOf=(ch,recursive=false)=>{
-    const r= getFactor(ch);
-    if (!recursive) return r;
+const factorsCache={}; //加快常用拆分的解構。
+export const factorsOf=(ch,opts={})=>{
+    const deep=opts.deep;
+    const variant=opts.variant;
+    if (!deep && !variant && factorsCache[ch]) return factorsCache[ch];
+
+    const r= getFactor(ch,variant);
+    if (!deep && !variant && !factorsCache[ch]) factorsCache[ch]=r;
+    if (!deep) {
+        return opts.ids?r.map(cp=>String.fromCodePoint(cp)).join(''):r;
+    }
     if (r) {
-        if (Array.isArray(ch)) {
-            for (let i=0;i<ch.length;i++) {
-                const out=[];
-                r[i][1].forEach(f=>expandFactor(f,out));
-                r[i][1]=out;
-            }
-            return r;
-        } else {
+        // if (Array.isArray(ch)) {
+        //     for (let i=0;i<ch.length;i++) {
+        //         const out=[];
+        //         r[i][1].forEach(f=>expandFactor(f,out));
+        //         r[i][1]=out;
+        //     }
+        //     return r;
+        // } else {
             let out=[];
             r.forEach(f=>expandFactor(f,out));
             return out;
-        }
+        // }
     }
 }
 //0:bmp, compatibility:1 , compatibility supplement:2
@@ -199,7 +209,8 @@ export const breedOf=(parts,order)=>{
     return out2;
 }
 
-export const breedCount=ch=>{ //返回孳乳數量
+export const breedCount=ch=>{ //返回孳乳數量，
+//孳乳數快迅收歛，後面一大批部件只有幾個孳乳，沒有必要每個部件都存其孳乳數
     if (typeof ch=='number') ch=String.fromCodePoint(ch);
     const idx=factors.indexOf(ch);
     const at=fibSearch(factors_offset, idx);
