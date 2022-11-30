@@ -8,7 +8,10 @@ export const packRLE=str=>{  //連續出現的字，以數字替代
     while (i<str.length) {
         const cp=str.codePointAt(i)
         const ch=String.fromCodePoint(cp);
-        if (cp>=0x30 && cp<=0x39) throw "cannot have number in RLE string"
+        if (cp>=0x30 && cp<=0x39) {
+            // console.log(cp.toString(16),str.slice(i-10,i+10))
+            throw "cannot have number in RLE string "
+        }
         if (ch===prev) {
             repeat++;
         } else {
