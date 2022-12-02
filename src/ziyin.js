@@ -82,10 +82,10 @@ export const factorsOf=(ch,opts={})=>{
 //extension A=3   extension B =10..., pua:30
 export const cjkBlock=cp=>{
     if (typeof cp=='string') cp=cp.codePointAt(0);
-    if (cp>=0x4E00&&cp<=0x9FEF) return 0;
-    if (cp>=0xf900&&cp<=0xfaff) return 1;
-    if (cp>=0x2f800&&cp<=0x2fa1f) return 2;
-    if (cp>=0x3400&&cp<=0x4dff) return 3;
+    if (cp>=0x4E00&&cp<=0x9FEF) return 0; //bmp
+    if (cp>=0xf900&&cp<=0xfaff) return 1; //compatible
+    if (cp>=0x2f800&&cp<=0x2fa1f) return 2;  //supliment
+    if (cp>=0x3400&&cp<=0x4dff) return 3;   //ext a
     if (cp>=0x20000&&cp<=0x2a6df) return 10;//ext b
     if (cp>=0x2a700&&cp<=0x2b73f) return 11;//ext c
     if (cp>=0x2b740&&cp<=0x2b81f) return 12;//ext d
@@ -107,8 +107,9 @@ export const cjkBlockNames={
     3:'ext-a',
     10:'ext-b',11:'ext-c',12:'ext-d',13:'ext-e',14:'ext-f',15:'ext-g',16:'ext-h',
     30:'ext-z', //ebag
+    20:'seal',
     41:'PUA',
-    42:'CHISE',
+    42:'chise',
 }
 export const cjkBlockOf=cp=>{
     const block=cjkBlock(cp);

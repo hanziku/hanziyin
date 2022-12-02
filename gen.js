@@ -8,13 +8,16 @@ import errata from './src/errata.js' //修補 ids.txt 的错误
 const idsfilenames=['IDS-UCS-Basic.txt','IDS-UCS-Compat-Supplement.txt','IDS-UCS-Compat.txt',
 'IDS-UCS-Ext-A.txt','IDS-UCS-Ext-B-1.txt','IDS-UCS-Ext-B-2.txt','IDS-UCS-Ext-B-3.txt','IDS-UCS-Ext-B-4.txt',
 'IDS-UCS-Ext-B-5.txt','IDS-UCS-Ext-B-6.txt','IDS-UCS-Ext-C.txt','IDS-UCS-Ext-D.txt','IDS-UCS-Ext-E.txt',
-'IDS-UCS-Ext-F.txt','IDS-UCS-Ext-G.txt','IDS-UCS-Ext-H.txt'];
+'IDS-UCS-Ext-F.txt','IDS-UCS-Ext-G.txt','IDS-UCS-Ext-H.txt'
+// created by ebag/gen.js
+,'../ebag/ids-seal.txt'
+];
 //from https://gitlab.chise.org/CHISE/ids
 
 const charset=splitUTF32Char(readTextContent('ebagglyphs.txt'))||[];
 let rawIDS=[];
 idsfilenames.forEach(fn=>{
-    const lines=readTextLines('chise/'+fn);
+    const lines=fn[0]=='.'?readTextLines(fn):readTextLines('chise/'+fn);
     lines.shift();
     rawIDS=rawIDS.concat(lines);
 })
@@ -60,16 +63,19 @@ rawIDS.forEach(line=>{
     line=line.replace('"',''); //fixing U+2AAC9	𪫉	⿰⿳日亠早彡[T]	⿰彦彡[O]"
     const m=line.match(/U[-\+]([A-F\d]{4,8})\t([^\t]+)\t(.+)/u);
     
+
     if (!m) throw line
     
     let [m0,uni,hz0,raw]=m;
     //some time hz0 is not a char 
+
     let hz=String.fromCodePoint(parseInt(uni,16));
+
     const at=bsearch(charset,hz);
     if (charset[at]!==hz) {
         return;
     }
-    
+
     if (hz==raw || !raw) {
         primes.push(hz);//    ('末級部件',hz)
         return;
